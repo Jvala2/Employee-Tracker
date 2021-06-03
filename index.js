@@ -60,6 +60,26 @@ const connection = mysql.createConnection({
       });
   }
 
+  function addEmployee() {
+    inquirer.prompt([{
+        type: "input",
+        name: "firstName",
+        message: "Enter Employee's first name"
+},
+{
+    type: "input",
+    name: "lastName",
+    message: "Enter Employee's last name"
+
+}]).then(function(res) {
+    connection.query("INSERT INTO employee (first_name, last_name) VALUES (?, ?,)", [res.firstName, res.lastName], function(err, data) {
+        if (err) throw err;
+        console.table("Success!");
+        mainMenu();
+    })
+})
+};
+
   function viewEmployee() {
   
     var query =
@@ -83,6 +103,12 @@ const connection = mysql.createConnection({
   }
 
 
+  function viewDepartment() {
+    connection.query("SELECT * FROM department", function (err, data) {
+        console.table(data);
+        mainMenu();
+    })
+}
 
 
 
