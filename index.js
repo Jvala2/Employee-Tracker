@@ -60,6 +60,22 @@ const connection = mysql.createConnection({
       });
   }
 
+function addDepartment() {
+  inquirer.prompt([
+      {
+      type: "input",
+      name: "name",
+      message: "Enter Department name."
+  } ]).then(function(res) {
+      console.log(res, "response")
+      connection.query("INSERT INTO departments SET ?", res.name, function(err, data) {
+          if (err) throw (err);
+          console.table(`Added${name}`);
+          trackerQuestions();
+      })
+  })
+}
+
   function addEmployee() {
     inquirer.prompt([{
         type: "input",
@@ -74,7 +90,7 @@ const connection = mysql.createConnection({
 }]).then(function(res) {
     connection.query("INSERT INTO employee (first_name, last_name) VALUES (?, ?,)", [res.firstName, res.lastName], function(err, data) {
         if (err) throw err;
-        console.table("Success!");
+        console.table(`Added${firstName, lastName}`);
         mainMenu();
     })
 })
