@@ -1,10 +1,11 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
+require("dotenv").config();
 const connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: '',
+    password: process.env.DB_PASSWORD,
     database: 'employee_db',
   });
 
@@ -25,7 +26,7 @@ const connection = mysql.createConnection({
             "Add Role",
             "Add Employee",
             "View Department",
-            "View Roll",
+            "View Role",
             "View Employee",
             "Update Employee Role",
             "End"]
@@ -44,8 +45,8 @@ const connection = mysql.createConnection({
             case "View Department":
                 viewDepartment();
                 break;
-            case "View Roll":
-                viewRoll();
+            case "View Role":
+                viewRole();
                 break;
             case "View Employee":
                 viewEmployee();
@@ -86,9 +87,19 @@ function addDepartment() {
     type: "input",
     name: "lastName",
     message: "Enter Employee's last name"
+},
+    {
+      type: "input",
+      name: "roleId",
+      message: "Enter the id of this Employee's role."
+  },
+  {
+      type: "number",
+      name: "managerId",
+      message: "Enter this Employee's Manager's Id"
 
 }]).then(function(res) {
-    connection.query("INSERT INTO employee (first_name, last_name) VALUES (?, ?,)", [res.firstName, res.lastName], function(err, data) {
+    connection.query("INSERT INTO employee (first_name, last_name) VALUES (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [res.firstName, res.lastName, res.roleId, res.managerId], function(err, data) {
         if (err) throw err;
         console.table(`Added${firstName, lastName}`);
         mainMenu();
@@ -96,41 +107,30 @@ function addDepartment() {
 })
 };
 
-  function viewEmployee() {
-  
-    var query =
-      `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager
-    FROM employee e
-    LEFT JOIN role r
-      ON e.role_id = r.id
-    LEFT JOIN department d
-    ON d.id = r.department_id
-    LEFT JOIN employee m
-      ON m.id = e.manager_id`
-  
-    connection.query(query, function (err, res) {
-      if (err) throw err;
-  
-      console.table(res);
-      console.log("Viewing Employees");
-  
-      firstPrompt();
-    });
-  }
+
+function viewEmployee() {
+  connection.query("Select * from employee", function (err, data) {
+    if (err) throw err;
+      console.table(data);
+      mainMenu();
+  })
+}
 
 
   function viewDepartment() {
     connection.query("SELECT * FROM department", function (err, data) {
+      if (err) throw err;
         console.table(data);
         mainMenu();
     })
 }
 
-
-
-
-  connection.connect((err) => {
+function viewRole() {
+  connection.query("SELECT * FROM role", function (err, data) {
     if (err) throw err;
-    console.log(`connected as id ${connection.threadId}\n`);
-    readColleges();
-  });
+      console.table(data);
+      mainMenu();
+  })
+}
+
+
