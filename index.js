@@ -133,4 +133,22 @@ function viewRole() {
   })
 }
 
+function updateEmployeeRole() {
+  inquirer.prompt([
+      {
+       message: "Enter the name of the Employee being updated.",
+       type: "input",
+       name: "name"   
+      },
+      {
+          message: "Enter the role id number",
+          type: "number",
+          name: "role_id"
+      }
+  ]).then(function (response) {
+      connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?", [response.role_id, response.name], function (err, data){
+          console.table(data);
+      })
+  })
+}
 
